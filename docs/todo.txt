@@ -1,0 +1,27 @@
+1. How to use different authentication method for different actions?
+    AccountController
+        Token for LogoutCurrent()
+        Basic for Login() and LogoutAll()
+
+2. What is the purpose of auth_key?
+    - for cookie which is used for auto login
+
+3. Add API versioning to project
+    - Done
+
+4. Finalize models & relationships
+
+##### TODO
+
+5. Upload of file
+
+6. Access control for controllers
+
+7. Generation of documentation
+
+8. Setup on Digital Ocean
+
+
+9. How to retrieve data using sub resource?
+    Use tokens in the custom URL
+    http://stackoverflow.com/questions/29778149/yii2-rest-api-extra-patterns-with-multiple-controllers

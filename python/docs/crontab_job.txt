@@ -1,0 +1,12 @@
+# Enable System Log for Cron
+# Run $sudo crontab -e
+# Add following lines to the cron
+
+*/5 * * * * (cd /var/www/html/publiccamera/python/ || exit 1; /usr/bin/python /var/www/html/publiccamera/python/main.py &)
+
+*/5 * * * * (cd /var/www/html/publiccamera/python/ || exit 1; /usr/bin/python /var/www/html/publiccamera/python/batch_crowd_index_today.py & >/dev/null 2>&1)
+
+5 19 * * * (cd /var/www/html/publiccamera/python/ || exit 1; /usr/bin/python /var/www/html/publiccamera/python/batch_crowd_index_floor.py & >/dev/null 2>&1)
+
+30 19 * * * (cd /var/www/html/publiccamera/python/ || exit 1; /usr/bin/python /var/www/html/publiccamera/python/batch_clean_old_data.py & >/dev/null 2>&1)
+

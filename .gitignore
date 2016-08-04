@@ -16,7 +16,7 @@ Thumbs.db
 /vendor
 
 # uploaded files
-/upload
+/upload/files
 
 # composer itself is not needed
 composer.phar

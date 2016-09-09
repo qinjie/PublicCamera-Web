@@ -1,0 +1,53 @@
+2016-09-07 09:41:21,599 [MainThread  ] [ERROR]  Calculate Crowd Index Error
+Traceback (most recent call last):
+  File "batch_crowd_index_today.py", line 71, in cal_node_crowd_now
+    logger.info('cal_node_crowd_now: in_file={1}'.format(in_file))
+IndexError: tuple index out of range
+2016-09-07 09:41:21,998 [MainThread  ] [ERROR]  Calculate Crowd Index Error
+Traceback (most recent call last):
+  File "batch_crowd_index_today.py", line 71, in cal_node_crowd_now
+    logger.info('cal_node_crowd_now: in_file={1}'.format(in_file))
+IndexError: tuple index out of range
+2016-09-07 09:41:22,393 [MainThread  ] [ERROR]  Calculate Crowd Index Error
+Traceback (most recent call last):
+  File "batch_crowd_index_today.py", line 71, in cal_node_crowd_now
+    logger.info('cal_node_crowd_now: in_file={1}'.format(in_file))
+IndexError: tuple index out of range
+2016-09-07 09:41:22,781 [MainThread  ] [ERROR]  Calculate Crowd Index Error
+Traceback (most recent call last):
+  File "batch_crowd_index_today.py", line 71, in cal_node_crowd_now
+    logger.info('cal_node_crowd_now: in_file={1}'.format(in_file))
+IndexError: tuple index out of range
+2016-09-07 09:41:23,175 [MainThread  ] [ERROR]  Calculate Crowd Index Error
+Traceback (most recent call last):
+  File "batch_crowd_index_today.py", line 71, in cal_node_crowd_now
+    logger.info('cal_node_crowd_now: in_file={1}'.format(in_file))
+IndexError: tuple index out of range
+2016-09-07 09:42:03,680 [MainThread  ] [ERROR]  Calculate Crowd Index Error
+Traceback (most recent call last):
+  File "batch_crowd_index_today.py", line 73, in cal_node_crowd_now
+    val = CrowdIdxCal(ref_file, in_file)
+  File "/var/www/html/publiccamera/python/IAmodule.py", line 25, in CrowdIdxCal
+    _, contours_Bgd, hierarchy = cv2.findContours(img_Bgd,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+ValueError: need more than 2 values to unpack
+2016-09-07 09:42:04,084 [MainThread  ] [ERROR]  Calculate Crowd Index Error
+Traceback (most recent call last):
+  File "batch_crowd_index_today.py", line 73, in cal_node_crowd_now
+    val = CrowdIdxCal(ref_file, in_file)
+  File "/var/www/html/publiccamera/python/IAmodule.py", line 25, in CrowdIdxCal
+    _, contours_Bgd, hierarchy = cv2.findContours(img_Bgd,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+ValueError: need more than 2 values to unpack
+2016-09-07 09:42:04,534 [MainThread  ] [ERROR]  Calculate Crowd Index Error
+Traceback (most recent call last):
+  File "batch_crowd_index_today.py", line 73, in cal_node_crowd_now
+    val = CrowdIdxCal(ref_file, in_file)
+  File "/var/www/html/publiccamera/python/IAmodule.py", line 25, in CrowdIdxCal
+    _, contours_Bgd, hierarchy = cv2.findContours(img_Bgd,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+ValueError: need more than 2 values to unpack
+2016-09-07 09:42:05,127 [MainThread  ] [ERROR]  Calculate Crowd Index Error
+Traceback (most recent call last):
+  File "batch_crowd_index_today.py", line 73, in cal_node_crowd_now
+    val = CrowdIdxCal(ref_file, in_file)
+  File "/var/www/html/publiccamera/python/IAmodule.py", line 25, in CrowdIdxCal
+    _, contours_Bgd, hierarchy = cv2.findContours(img_Bgd,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+ValueError: need more than 2 values to unpack

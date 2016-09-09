@@ -30,16 +30,5 @@ if __name__ == '__main__':
     auth = HTTPBasicAuth(username, password)
 
     entity = NodeFile()
-    entity.keep_latest_n_each(cnt=20, auth=auth)
-
-    entity = NodeData()
-    # resp = entity.search("label=CrowdNow", auth)
-    resp = entity.search("type=0", auth)
-    if resp.status_code == 200:
-        j = json.loads(resp.text)
-        if 'items' not in j:
-            raise ValueError("No items in returned json")
-
-        # Create a setting map for this floor
-        for obj in j['items']:
-            r = entity.delete(obj['id'], auth)
+    # keep max 500 records for each node
+    entity.delete_older_than_n(keepn=500, auth=auth)

@@ -1,7 +1,7 @@
 __author__ = 'zqi2'
 
 import os
-
+import utils
 import requests
 from requests.auth import HTTPBasicAuth
 
@@ -92,6 +92,25 @@ class NodeFile(Entity):
         return r
 
 
+    def old_data_id_list(self, older_than_n=720, auth=None):
+        url = self._urls['old_data_id_list'].replace("<older_than_n>", str(older_than_n))
+        headers = {'Accept': 'application/json'}
+        r = requests.get(url, auth=auth, headers=headers)
+        self._logger.info("old_data_id_list: %s", url)
+        self._logger.info("%s %s", r.status_code, r.headers['content-type'])
+        self._logger.info(r.text)
+        return r
+
+    def delete_older_than_n(self, keepn=500, auth=None):
+        url = self._urls['delete_older_than_n'].replace("<keepn>", str(keepn))
+        headers = {'Accept': 'application/json'}
+        r = requests.delete(url, auth=auth, headers=headers)
+        self._logger.info("delete_older_than_n: %s", url)
+        self._logger.info("%s %s", r.status_code, r.headers['content-type'])
+        self._logger.info(r.text)
+        return r
+
+
 if __name__ == '__main__':
 
     # # Read options from command line
@@ -101,6 +120,8 @@ if __name__ == '__main__':
     # argParser.add_argument('-u', '--username', help="Username", required=False)
     # argParser.add_argument('-p', '--password', help="Password", required=False)
     # args = argParser.parse_args()
+
+    logger = utils.init_logger("batch")
 
     # Username and Password for Authentication
     username = 'user1'
@@ -121,16 +142,24 @@ if __name__ == '__main__':
     # LATEST_BY_PROJECT
     entity.latest_by_project(projectId=1, auth=auth)
 
+    username = 'manager1'
+    password = '123456'
+    auth = HTTPBasicAuth(username, password)
+
     # LATEST_BY_PROJECT_AND_LABEL
     label = "This is your label"
     entity.latest_by_project_and_label(projectId=1, label=label, auth=auth)
+    
+    entity.keep_latest_n_each(cnt=500, auth=auth)
+
+    entity.delete_older_than_n(keepn=500, auth=auth)
 
     # UPLOAD
-    payload = {'nodeId': 2, 'fileName': 'testfiles/0002_20160119_000911_81238700.jpg', 'label': 'This is Test 4'}
+    #payload = {'nodeId': 2, 'fileName': 'testfiles/0002_20160119_000911_81238700.jpg', 'label': 'This is Test 4'}
 
-    r = entity.upload(payload, auth)
-    if r and r.status_code == 200:
-        obj = r.json()
+    #r = entity.upload(payload, auth)
+    #if r and r.status_code == 200:
+    #   obj = r.json()
 
         # DELETE
         # r3 = entity.delete(obj['id'], auth)

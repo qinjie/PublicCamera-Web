@@ -68,6 +68,8 @@ def cal_node_crowd_now(auth=None):
         j['status'] = 3
         if os.path.isfile(in_file) and os.path.isfile(ref_file):
             try:
+                logger.error('cal_node_crowd_now: in_file={0}'.format(in_file))
+                logger.error('cal_node_crowd_now: ref_file={0}'.format(ref_file))
                 val = CrowdIdxCal(ref_file, in_file)
                 if str(val).isdigit():
                     x = entity_nodedata.search('nodeId={0}&nodeFileId={1}&type={2}'.format(node_id, j['id'], TYPE))

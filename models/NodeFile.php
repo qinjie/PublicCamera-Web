@@ -30,6 +30,7 @@ class NodeFile extends MyActiveRecord
     const STATUS_NEW = 0;
     const STATUS_PROCESSING = 1;
     const STATUS_DONE = 2;
+    const STATUS_DELETE = 3;
 
     public function fields()
     {

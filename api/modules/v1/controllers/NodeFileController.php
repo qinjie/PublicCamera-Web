@@ -19,6 +19,7 @@ use yii\filters\AccessControl;
 use yii\web\NotFoundHttpException;
 use yii\web\ServerErrorHttpException;
 use yii\imagine\Image;
+use yii\db\Query;
 
 class NodeFileController extends MyActiveController
 {
@@ -31,17 +32,17 @@ class NodeFileController extends MyActiveController
         $behaviors = parent::behaviors();
 
         $behaviors['authenticator']['except'] = ['index', 'view', 'search',
-            'latest-by-project',
-            'latest-by-floor',
-            'book-one'];
+            'latest-by-floor', 'latest-by-project', 'book-one',
+            'old-data-id-list',
+        ];
 
         $behaviors['access'] = [
             'class' => AccessControl::className(),
             'rules' => [
                 [
                     'actions' => ['view', 'index', 'search',
-                        'latest-by-project',
-                        'latest-by-floor', 'book-one'],
+                        'latest-by-floor', 'latest-by-project', 'book-one',
+                        'old-data-id-list'],
                     'allow' => true,
                     'roles' => ['?'],
                 ],
@@ -51,7 +52,7 @@ class NodeFileController extends MyActiveController
                     'roles' => ['user',],
                 ],
                 [
-                    'actions' => ['delete-hours-older', 'keep-latest-n-each'],
+                    'actions' => ['delete-hours-older', 'keep-latest-n-each', 'delete-older-than-n'],
                     'allow' => true,
                     'roles' => ['manager',],
                 ],
@@ -168,20 +169,6 @@ class NodeFileController extends MyActiveController
         return $nodeFile;
     }
 
-    public function actionLatestByProject($projectId)
-    {
-        $sql = "SELECT n1.*
-            FROM nodefile AS n1
-            LEFT JOIN nodefile AS n2
-              ON (n1.nodeId = n2.nodeId AND n1.id < n2.id)
-            LEFT JOIN node AS n
-              ON (n1.nodeId = n.id)
-            WHERE n2.nodeId IS NULL AND n.projectId = :projectId";
-
-        $nodeFiles = NodeFile::findBySql($sql, ['projectId' => $projectId])->all();
-
-        return $nodeFiles;
-    }
 
     public function actionLatestByFloor($floorId)
     {
@@ -198,6 +185,22 @@ class NodeFileController extends MyActiveController
         return $nodeFiles;
     }
 
+    public function actionLatestByProject($projectId)
+    {
+        $sql = "SELECT n1.*
+            FROM nodefile AS n1
+            LEFT JOIN nodefile AS n2
+              ON (n1.nodeId = n2.nodeId AND n1.id < n2.id)
+            LEFT JOIN node AS n
+              ON (n1.nodeId = n.id)
+            WHERE n2.nodeId IS NULL AND n.projectId = :projectId";
+
+        $nodeFiles = NodeFile::findBySql($sql, ['projectId' => $projectId])->all();
+
+        return $nodeFiles;
+    }
+
+
     public function actionDeleteHoursOlder($hours = 168)
     {
         $deadline = date("Y-m-d H:i:s", strtotime('-' . $hours . ' hours'));
@@ -211,7 +214,7 @@ class NodeFileController extends MyActiveController
         return ['found' => sizeof($files), 'deleted' => $count];
     }
 
-    public function actionKeepLatestNEach($cnt = 720)
+    public function actionKeepLatestNEach($cnt = 100)
     {
         //-- Keep latest N record for each node
         $sql = "select p.*
@@ -230,6 +233,7 @@ class NodeFileController extends MyActiveController
                 WHERE p2.id IS NULL";
         $files = NodeFile::findBySql($sql,
             ['latest_n' => $cnt])->all();
+
         $count = 0;
         foreach ($files as $file) {
             // Use AR delete so that it wil delete the related file too
@@ -249,4 +253,54 @@ class NodeFileController extends MyActiveController
         }
         throw new NotFoundHttpException("No un-processed NodeFile found.");
     }
+
+    public function actionOldDataIdList($keepn = 500)
+    {
+        // Keep max "cnt" number of records for each node, and return ID of all other records
+        $sql = "select p.id, fileName
+                FROM nodefile AS p
+                LEFT JOIN (
+                    SELECT id, nodeId FROM
+                    ( SELECT id, nodeId,
+                        @rn := IF(@prev = nodeId, @rn + 1, 1) AS rn,
+                        @prev := nodeId
+                            FROM nodefile
+                            JOIN (SELECT @prev := NULL, @rn := 0) AS vars
+                            ORDER BY nodeId, id DESC
+                     ) AS t
+                     WHERE rn <= :latest_n
+                ) p2 USING(id) 
+                WHERE p2.id IS NULL";
+        $idList = NodeFile::findBySql($sql,
+            ['latest_n' => $keepn])->all();
+        return $idList;
+    }
+
+    public function actionDeleteOlderThanN($keepn = 500)
+    {
+        // Keep max "cnt" number of records for each node, and delete all other records
+        $sql = "Update nodefile AS p
+                LEFT JOIN (
+                    SELECT id, nodeId FROM
+                    ( SELECT id, nodeId,
+                        @rn := IF(@prev = nodeId, @rn + 1, 1) AS rn,
+                        @prev := nodeId
+                            FROM nodefile AS n
+                            JOIN (SELECT @prev := NULL, @rn := 0) AS vars
+                            ORDER BY nodeId, id DESC
+                     ) AS t
+                     WHERE rn <= :latest_n
+                ) p2 USING(id)
+                Set p.status = 3
+                WHERE p2.id IS NULL";
+
+        $connection = \Yii::$app->db;
+        $model = $connection->createCommand($sql);
+        $model->bindParam(':latest_n', $keepn);
+        $m = $model->execute();
+
+        $n = NodeFile::deleteAll('status = 3');
+        return $m . ", " . $n;
+    }
+
 }

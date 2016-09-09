@@ -6,7 +6,7 @@ RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 # otherwise forward it to index.php
-RewriteRule . index.php
+RewriteRule ^$ /web [R]
 
 AddHandler markdown .md
 
